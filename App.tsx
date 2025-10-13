@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useUrlQuery } from './hooks/useUrlQuery';
-import { generateAnimalImage, generateBrainImage, sendToN8N } from './services/imageProcessor';
+import { generateAnimalImage, generateBrainImage, sendToN8N, AnimalData } from './services/imageProcessor';
 import { ImageResultCard } from './components/ImageResultCard';
 import { Loader } from './components/Loader';
 
@@ -24,49 +24,58 @@ const App: React.FC = () => {
     setError(null);
     setSubmissionState('idle');
 
-    const aguia = query.get('aguia');
-    const gato = query.get('gato');
-    const tubarao = query.get('tubarao');
-    const lobo = query.get('lobo');
-    const razao = query.get('razao');
-    const emocao = query.get('emocao');
-    const pensante = query.get('pensante');
-    const atuante = query.get('atuante');
+    const dataParam = query.get('data');
 
-    const params = { aguia, gato, tubarao, lobo, razao, emocao, pensante, atuante };
-
-    const missingParams = Object.entries(params).filter(([, value]) => value === null).map(([key]) => key);
-    if (missingParams.length > 0) {
-      setError(`Parâmetros não encontrados na URL: ${missingParams.join(', ')}. Verifique se todos os 8 parâmetros foram fornecidos.`);
-      setLoading(false);
-      return;
-    }
-
-    const animalData = {
-      aguia: parseInt(aguia!, 10),
-      gato: parseInt(gato!, 10),
-      tubarao: parseInt(tubarao!, 10),
-      lobo: parseInt(lobo!, 10),
-    };
-
-    const brainData = {
-      razao: parseInt(razao!, 10),
-      emocao: parseInt(emocao!, 10),
-      pensante: parseInt(pensante!, 10),
-      atuante: parseInt(atuante!, 10),
-    };
-    
-    const allData = { ...animalData, ...brainData };
-    const invalidParams = Object.entries(allData).filter(([, value]) => isNaN(value)).map(([key]) => key);
-    if (invalidParams.length > 0) {
-      setError(`Os seguintes parâmetros contêm valores inválidos: ${invalidParams.join(', ')}. Eles devem ser números.`);
+    if (!dataParam) {
+      setError('Parâmetro "data" não encontrado na URL. Forneça um objeto JSON URL-encoded com os dados necessários.');
       setLoading(false);
       return;
     }
 
     try {
+      const jsonData = JSON.parse(dataParam);
+
+      const requiredKeys = ["A", "G", "T", "L", "Principal", "Emoção Direito", "Razão Esquerdo", "Pensante Anterior", "Atuante Posterior"];
+      const missingKeys = requiredKeys.filter(key => !(key in jsonData));
+      if (missingKeys.length > 0) {
+        throw new Error(`As seguintes chaves estão faltando no objeto JSON: ${missingKeys.join(', ')}`);
+      }
+
+      const animalData: AnimalData = {
+        aguia: parseInt(jsonData.A, 10),
+        gato: parseInt(jsonData.G, 10),
+        tubarao: parseInt(jsonData.T, 10),
+        lobo: parseInt(jsonData.L, 10),
+      };
+
+      const brainData = {
+        razao: parseInt(jsonData["Razão Esquerdo"], 10),
+        emocao: parseInt(jsonData["Emoção Direito"], 10),
+        pensante: parseInt(jsonData["Pensante Anterior"], 10),
+        atuante: parseInt(jsonData["Atuante Posterior"], 10),
+      };
+      
+      const allData = { ...animalData, ...brainData };
+      const invalidParams = Object.entries(allData).filter(([, value]) => isNaN(value)).map(([key]) => key);
+      if (invalidParams.length > 0) {
+        throw new Error(`Os seguintes parâmetros contêm valores inválidos (não são números): ${invalidParams.join(', ')}.`);
+      }
+
+      const principalAnimalFullName = jsonData.Principal;
+      const animalNameMap: { [key: string]: keyof AnimalData } = {
+          'Águia': 'aguia',
+          'Gato': 'gato',
+          'Tubarão': 'tubarao',
+          'Lobo': 'lobo'
+      };
+      const principalAnimalKey = animalNameMap[principalAnimalFullName];
+
+      if (!principalAnimalKey) {
+        throw new Error(`Valor de "Principal" inválido: "${principalAnimalFullName}". Valores esperados: Águia, Gato, Tubarão, Lobo.`);
+      }
+
       const [generatedAnimalImg, generatedBrainImg] = await Promise.all([
-        generateAnimalImage(BASE_IMAGE_ANIMALS_URL, animalData),
+        generateAnimalImage(BASE_IMAGE_ANIMALS_URL, animalData, principalAnimalKey),
         generateBrainImage(BASE_IMAGE_BRAIN_URL, brainData),
       ]);
       setAnimalImage(generatedAnimalImg);
@@ -77,7 +86,7 @@ const App: React.FC = () => {
         await sendToN8N({
           animalImage: generatedAnimalImg,
           brainImage: generatedBrainImg,
-          params: allData,
+          params: jsonData,
         });
         setSubmissionState('success');
       } catch (n8nError) {
@@ -88,8 +97,8 @@ const App: React.FC = () => {
 
     } catch (err) {
       console.error(err);
-      const errorMessage = err instanceof Error ? err.message : 'Ocorreu um erro desconhecido ao processar as imagens.';
-      setError(`Falha ao gerar imagens: ${errorMessage}`);
+      const errorMessage = err instanceof Error ? err.message : 'Ocorreu um erro desconhecido ao processar os dados.';
+      setError(`Falha ao processar dados: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
@@ -143,8 +152,8 @@ const App: React.FC = () => {
         <div className="text-center p-8 bg-red-900/50 border border-red-700 rounded-lg max-w-4xl mx-auto">
           <h2 className="text-2xl font-bold text-red-400 mb-2">Erro</h2>
           <p className="text-red-300 font-mono break-words">{error}</p>
-          <p className="mt-4 text-gray-400">Exemplo de URL correta:<br/>
-          <code className="text-sm">?lobo=15&amp;aguia=30&amp;tubarao=25&amp;gato=20&amp;razao=48&amp;emocao=52&amp;pensante=52&amp;atuante=48</code>
+          <p className="mt-4 text-gray-400">Exemplo de URL correta (JSON precisa ser URL-encoded):<br/>
+          <code className="text-sm bg-gray-800 p-1 rounded">?data={"{"}"A":35,"G":20,"T":30,"L":15,"Principal":"Águia", ...etc }</code>
           </p>
         </div>
       );

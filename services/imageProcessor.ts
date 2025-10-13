@@ -1,4 +1,4 @@
-interface AnimalData {
+export interface AnimalData {
   lobo: number;
   aguia: number;
   tubarao: number;
@@ -20,7 +20,7 @@ const N8N_WEBHOOK_URL = 'https://n8n.lcai.com.br/webhook/imagensprontas';
 interface N8nPayload {
   animalImage: string;
   brainImage: string;
-  params: { [key: string]: number };
+  params: { [key: string]: number | string };
 }
 
 export const sendToN8N = async (payload: N8nPayload): Promise<void> => {
@@ -80,7 +80,7 @@ const drawTextWithShadow = (
 };
 
 
-export const generateAnimalImage = (baseImageUrl: string, data: AnimalData): Promise<string> => {
+export const generateAnimalImage = (baseImageUrl: string, data: AnimalData, principalAnimalKey: keyof AnimalData): Promise<string> => {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.crossOrigin = 'Anonymous';
@@ -103,7 +103,7 @@ export const generateAnimalImage = (baseImageUrl: string, data: AnimalData): Pro
         ctx.drawImage(img, 0, 0);
 
         const animalEntries = Object.entries(data);
-        const [highestAnimalName] = animalEntries.reduce((max, current) => current[1] > max[1] ? current : max, animalEntries[0]);
+        const highestAnimalName = principalAnimalKey;
 
         const fontName = 'Montserrat, sans-serif';
         const normalFontSize = 90;

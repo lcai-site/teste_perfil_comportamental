@@ -153,7 +153,7 @@ const App: React.FC = () => {
           <h2 className="text-2xl font-bold text-red-400 mb-2">Erro</h2>
           <p className="text-red-300 font-mono break-words">{error}</p>
           <p className="mt-4 text-gray-400">Exemplo de URL correta (JSON precisa ser URL-encoded):<br/>
-          <code className="text-sm bg-gray-800 p-1 rounded">?data={"{"}"A":35,"G":20,"T":30,"L":15,"Principal":"Águia", ...etc }</code>
+          <code className="text-sm bg-gray-900 p-1 rounded">?data={"{"}"A":35,"G":20,"T":30,"L":15,"Principal":"Águia", ...etc }</code>
           </p>
         </div>
       );
@@ -181,7 +181,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
+    <div className="min-h-screen bg-black text-gray-100 flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
       <header className="text-center mb-8 lg:mb-12">
         <h1 className="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500">
           Seu Resultado Personalizado

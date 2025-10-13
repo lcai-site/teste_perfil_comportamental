@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useUrlQuery } from './hooks/useUrlQuery';
-import { generateAnimalImage, generateBrainImage } from './services/imageProcessor';
+import { generateAnimalImage, generateBrainImage, sendToN8N } from './services/imageProcessor';
 import { ImageResultCard } from './components/ImageResultCard';
 import { Loader } from './components/Loader';
 
 // URLs das imagens base
-const BASE_IMAGE_BRAIN_URL = 'https://i.postimg.cc/rpvQSnHn/Design-sem-nome-16.png';
+const BASE_IMAGE_BRAIN_URL = 'https://i.postimg.cc/LXMYjwtX/Inserir-um-t-tulo-6.png';
 const BASE_IMAGE_ANIMALS_URL = 'https://i.postimg.cc/6QDYdjPb/Design-sem-nome-17.png';
+
+type SubmissionState = 'idle' | 'sending' | 'success' | 'error';
 
 const App: React.FC = () => {
   const query = useUrlQuery();
@@ -14,19 +16,22 @@ const App: React.FC = () => {
   const [animalImage, setAnimalImage] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [submissionState, setSubmissionState] = useState<SubmissionState>('idle');
+  const [submissionError, setSubmissionError] = useState<string | null>(null);
 
   const processImages = useCallback(async () => {
-    // Parâmetros para a imagem dos animais
+    setLoading(true);
+    setError(null);
+    setSubmissionState('idle');
+
     const aguia = query.get('aguia');
     const gato = query.get('gato');
     const tubarao = query.get('tubarao');
     const lobo = query.get('lobo');
-
-    // Parâmetros para a imagem do cérebro
-    const razao = query.get('razao'); // Esquerdo
-    const emocao = query.get('emocao'); // Direito
-    const pensante = query.get('pensante'); // Anterior
-    const atuante = query.get('atuante'); // Posterior
+    const razao = query.get('razao');
+    const emocao = query.get('emocao');
+    const pensante = query.get('pensante');
+    const atuante = query.get('atuante');
 
     const params = { aguia, gato, tubarao, lobo, razao, emocao, pensante, atuante };
 
@@ -59,9 +64,6 @@ const App: React.FC = () => {
       return;
     }
 
-    setLoading(true);
-    setError(null);
-
     try {
       const [generatedAnimalImg, generatedBrainImg] = await Promise.all([
         generateAnimalImage(BASE_IMAGE_ANIMALS_URL, animalData),
@@ -69,6 +71,21 @@ const App: React.FC = () => {
       ]);
       setAnimalImage(generatedAnimalImg);
       setBrainImage(generatedBrainImg);
+
+      setSubmissionState('sending');
+      try {
+        await sendToN8N({
+          animalImage: generatedAnimalImg,
+          brainImage: generatedBrainImg,
+          params: allData,
+        });
+        setSubmissionState('success');
+      } catch (n8nError) {
+        console.error('N8N submission failed:', n8nError);
+        setSubmissionState('error');
+        setSubmissionError(n8nError instanceof Error ? n8nError.message : 'Ocorreu um erro desconhecido.');
+      }
+
     } catch (err) {
       console.error(err);
       const errorMessage = err instanceof Error ? err.message : 'Ocorreu um erro desconhecido ao processar as imagens.';
@@ -81,6 +98,40 @@ const App: React.FC = () => {
   useEffect(() => {
     processImages();
   }, [processImages]);
+
+  const renderSubmissionStatus = () => {
+    if (submissionState === 'idle') return null;
+
+    let message = '';
+    let textColor = 'text-gray-400';
+    let isPulsing = false;
+
+    switch (submissionState) {
+      case 'sending':
+        message = 'Enviando resultados para o sistema...';
+        isPulsing = true;
+        break;
+      case 'success':
+        message = '✅ Resultados enviados com sucesso!';
+        textColor = 'text-green-400';
+        break;
+      case 'error':
+        message = `❌ Falha ao enviar os resultados.`;
+        textColor = 'text-red-400';
+        break;
+    }
+
+    return (
+        <div className="mt-8 text-center">
+            <p className={`text-lg ${textColor} ${isPulsing ? 'animate-pulse' : ''}`}>
+                {message}
+            </p>
+            {submissionState === 'error' && submissionError && (
+                 <p className="text-sm text-red-500 mt-1 font-mono">{submissionError}</p>
+            )}
+        </div>
+    );
+  };
 
   const renderContent = () => {
     if (loading) {
@@ -101,18 +152,21 @@ const App: React.FC = () => {
 
     if (animalImage && brainImage) {
       return (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
-          <ImageResultCard
-            title="Perfil Comportamental"
-            imageUrl={animalImage}
-            filename="perfil_comportamental_animais.png"
-          />
-          <ImageResultCard
-            title="Mapeamento Cerebral"
-            imageUrl={brainImage}
-            filename="mapeamento_cerebral.png"
-          />
-        </div>
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+            <ImageResultCard
+              title="Perfil Comportamental"
+              imageUrl={animalImage}
+              filename="perfil_comportamental_animais.png"
+            />
+            <ImageResultCard
+              title="Mapeamento Cerebral"
+              imageUrl={brainImage}
+              filename="mapeamento_cerebral.png"
+            />
+          </div>
+          {renderSubmissionStatus()}
+        </>
       );
     }
     

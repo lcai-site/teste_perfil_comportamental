@@ -12,6 +12,43 @@ interface BrainData {
   emocao: number;
 }
 
+// --- N8N Integration ---
+
+// IMPORTANTE: Substitua esta URL de placeholder pela URL real do seu webhook N8N.
+const N8N_WEBHOOK_URL = 'https://n8n.lcai.com.br/webhook/imagensprontas';
+
+interface N8nPayload {
+  animalImage: string;
+  brainImage: string;
+  params: { [key: string]: number };
+}
+
+export const sendToN8N = async (payload: N8nPayload): Promise<void> => {
+  // Verification to prevent sending to a placeholder URL
+  if (N8N_WEBHOOK_URL.includes('your-n8n-instance.com') || N8N_WEBHOOK_URL.includes('placeholder')) {
+    console.warn('URL do Webhook N8N é um placeholder. Envio ignorado. Por favor, configure a URL correta em services/imageProcessor.ts');
+    // For demonstration, we resolve successfully to not show an error in the UI.
+    // In a real application, you might want to throw an error here.
+    return;
+  }
+
+  const response = await fetch(N8N_WEBHOOK_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    throw new Error(`Falha ao enviar dados para N8N. Status: ${response.status}. Corpo: ${errorBody}`);
+  }
+};
+
+
+// --- Image Processing ---
+
 const drawTextWithShadow = (
   ctx: CanvasRenderingContext2D,
   text: string,
@@ -51,8 +88,8 @@ export const generateAnimalImage = (baseImageUrl: string, data: AnimalData): Pro
 
     img.onload = () => {
       const canvas = document.createElement('canvas');
-      canvas.width = img.width;
-      canvas.height = img.height;
+      canvas.width = img.width; // Should be 1080
+      canvas.height = img.height; // Should be 1350
       const ctx = canvas.getContext('2d');
 
       if (!ctx) {
@@ -68,13 +105,14 @@ export const generateAnimalImage = (baseImageUrl: string, data: AnimalData): Pro
       const normalFontSize = 90;
       const highestFontSize = 120;
       const normalColor = '#FFFFFF';
-      const highestColor = '#FF4136'; // Vermelho vibrante
+      const highestColor = '#FFED00'; // Amarelo vibrante
 
+      // Posições ajustadas para uma tela de 1080x1350, com alinhamento central.
       const positions: { [key: string]: { x: number; y: number } } = {
-        lobo: { x: 45, y: 450 },
-        aguia: { x: 585, y: 450 },
-        tubarao: { x: 45, y: 990 },
-        gato: { x: 585, y: 990 },
+        lobo: { x: 270, y: 450 },     // Quadrante superior esquerdo
+        aguia: { x: 810, y: 450 },    // Quadrante superior direito
+        tubarao: { x: 270, y: 990 },  // Quadrante inferior esquerdo
+        gato: { x: 810, y: 990 },     // Quadrante inferior direito
       };
 
       for (const [name, percentage] of animalEntries) {
@@ -85,7 +123,7 @@ export const generateAnimalImage = (baseImageUrl: string, data: AnimalData): Pro
         const text = `${percentage}%`;
         const { x, y } = positions[name as keyof AnimalData];
 
-        drawTextWithShadow(ctx, text, x, y, font, color, 'left', 'bottom');
+        drawTextWithShadow(ctx, text, x, y, font, color, 'center', 'middle');
       }
 
       resolve(canvas.toDataURL('image/png'));
@@ -106,8 +144,8 @@ export const generateBrainImage = (baseImageUrl: string, data: BrainData): Promi
 
     img.onload = () => {
         const canvas = document.createElement('canvas');
-        canvas.width = img.width;
-        canvas.height = img.height;
+        canvas.width = img.width; // Should be 1080
+        canvas.height = img.height; // Should be 1350
         const ctx = canvas.getContext('2d');
   
         if (!ctx) {
@@ -121,11 +159,12 @@ export const generateBrainImage = (baseImageUrl: string, data: BrainData): Promi
         const color = '#FFFFFF';
         const font = `bold ${fontSize}px ${fontName}`;
 
+        // Posições ajustadas para a nova imagem do cérebro (1080x1350)
         const positions: { [key: string]: { x: number; y: number } } = {
-            pensante: { x: 540, y: 295 },
-            razao: { x: 220, y: 680 },
-            emocao: { x: 860, y: 680 },
-            atuante: { x: 540, y: 995 },
+            pensante: { x: 540, y: 295 },  // Topo
+            razao: { x: 270, y: 680 },     // Esquerda
+            emocao: { x: 810, y: 680 },    // Direita
+            atuante: { x: 540, y: 995 },   // Base
         };
   
         drawTextWithShadow(ctx, `${data.pensante}%`, positions.pensante.x, positions.pensante.y, font, color, 'center', 'middle');

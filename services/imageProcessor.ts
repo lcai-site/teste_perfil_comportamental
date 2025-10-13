@@ -107,12 +107,12 @@ export const generateAnimalImage = (baseImageUrl: string, data: AnimalData): Pro
       const normalColor = '#FFFFFF';
       const highestColor = '#FFED00'; // Amarelo vibrante
 
-      // Posições ajustadas para uma tela de 1080x1350, com alinhamento central.
+      // Posições definidas pelo usuário
       const positions: { [key: string]: { x: number; y: number } } = {
-        lobo: { x: 270, y: 450 },     // Quadrante superior esquerdo
-        aguia: { x: 810, y: 450 },    // Quadrante superior direito
-        tubarao: { x: 270, y: 990 },  // Quadrante inferior esquerdo
-        gato: { x: 810, y: 990 },     // Quadrante inferior direito
+        lobo: { x: 250, y: 410 },     // Quadrante superior esquerdo
+        aguia: { x: 820, y: 410 },    // Quadrante superior direito
+        tubarao: { x: 250, y: 960 },  // Quadrante inferior esquerdo
+        gato: { x: 820, y: 960 },     // Quadrante inferior direito
       };
 
       for (const [name, percentage] of animalEntries) {
@@ -159,12 +159,12 @@ export const generateBrainImage = (baseImageUrl: string, data: BrainData): Promi
         const color = '#FFFFFF';
         const font = `bold ${fontSize}px ${fontName}`;
 
-        // Posições ajustadas para a nova imagem do cérebro (1080x1350)
+        // Posições definidas pelo usuário
         const positions: { [key: string]: { x: number; y: number } } = {
-            pensante: { x: 540, y: 295 },  // Topo
-            razao: { x: 270, y: 680 },     // Esquerda
-            emocao: { x: 810, y: 680 },    // Direita
-            atuante: { x: 540, y: 995 },   // Base
+            pensante: { x: 540, y: 310 },   // Parte superior central
+            razao: { x: 250, y: 640 },      // Lado esquerdo
+            emocao: { x: 820, y: 640 },     // Lado direito
+            atuante: { x: 540, y: 1080 },   // Parte inferior central
         };
   
         drawTextWithShadow(ctx, `${data.pensante}%`, positions.pensante.x, positions.pensante.y, font, color, 'center', 'middle');

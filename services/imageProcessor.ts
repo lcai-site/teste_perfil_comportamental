@@ -86,47 +86,54 @@ export const generateAnimalImage = (baseImageUrl: string, data: AnimalData): Pro
     img.crossOrigin = 'Anonymous';
     img.src = baseImageUrl;
 
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      canvas.width = img.width; // Should be 1080
-      canvas.height = img.height; // Should be 1350
-      const ctx = canvas.getContext('2d');
+    img.onload = async () => {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width; // Should be 1080
+        canvas.height = img.height; // Should be 1350
+        const ctx = canvas.getContext('2d');
 
-      if (!ctx) {
-        return reject(new Error('Não foi possível obter o contexto do canvas.'));
+        if (!ctx) {
+          return reject(new Error('Não foi possível obter o contexto do canvas.'));
+        }
+
+        // Garante que a fonte customizada está carregada antes de desenhar o texto
+        await document.fonts.ready;
+
+        ctx.drawImage(img, 0, 0);
+
+        const animalEntries = Object.entries(data);
+        const [highestAnimalName] = animalEntries.reduce((max, current) => current[1] > max[1] ? current : max, animalEntries[0]);
+
+        const fontName = 'Montserrat, sans-serif';
+        const normalFontSize = 90;
+        const highestFontSize = 180; // Corrigido para ser o dobro do tamanho normal
+        const normalColor = '#FFFFFF';
+        const highestColor = '#FFED00'; // Amarelo vibrante
+
+        // Posições corrigidas conforme a imagem de referência
+        const positions: { [key: string]: { x: number; y: number } } = {
+          lobo:    { x: 250, y: 410 },
+          aguia:   { x: 820, y: 410 },
+          tubarao: { x: 250, y: 960 },
+          gato:    { x: 820, y: 960 },
+        };
+
+        for (const [name, percentage] of animalEntries) {
+          const isHighest = name === highestAnimalName;
+          const fontSize = isHighest ? highestFontSize : normalFontSize;
+          const color = isHighest ? highestColor : normalColor;
+          const font = `bold ${fontSize}px ${fontName}`;
+          const text = `${percentage}%`;
+          const { x, y } = positions[name as keyof AnimalData];
+
+          drawTextWithShadow(ctx, text, x, y, font, color, 'center', 'middle');
+        }
+
+        resolve(canvas.toDataURL('image/png'));
+      } catch (err) {
+        reject(new Error(`Erro durante o processamento da imagem dos animais: ${err instanceof Error ? err.message : String(err)}`));
       }
-
-      ctx.drawImage(img, 0, 0);
-
-      const animalEntries = Object.entries(data);
-      const [highestAnimalName] = animalEntries.reduce((max, current) => current[1] > max[1] ? current : max, animalEntries[0]);
-
-      const fontName = 'Montserrat, sans-serif';
-      const normalFontSize = 90;
-      const highestFontSize = 120;
-      const normalColor = '#FFFFFF';
-      const highestColor = '#FFED00'; // Amarelo vibrante
-
-      // Posições definidas pelo usuário
-      const positions: { [key: string]: { x: number; y: number } } = {
-        lobo: { x: 250, y: 410 },     // Quadrante superior esquerdo
-        aguia: { x: 820, y: 410 },    // Quadrante superior direito
-        tubarao: { x: 250, y: 960 },  // Quadrante inferior esquerdo
-        gato: { x: 820, y: 960 },     // Quadrante inferior direito
-      };
-
-      for (const [name, percentage] of animalEntries) {
-        const isHighest = name === highestAnimalName;
-        const fontSize = isHighest ? highestFontSize : normalFontSize;
-        const color = isHighest ? highestColor : normalColor;
-        const font = `bold ${fontSize}px ${fontName}`;
-        const text = `${percentage}%`;
-        const { x, y } = positions[name as keyof AnimalData];
-
-        drawTextWithShadow(ctx, text, x, y, font, color, 'center', 'middle');
-      }
-
-      resolve(canvas.toDataURL('image/png'));
     };
 
     img.onerror = () => {
@@ -142,7 +149,8 @@ export const generateBrainImage = (baseImageUrl: string, data: BrainData): Promi
     img.crossOrigin = 'Anonymous';
     img.src = baseImageUrl;
 
-    img.onload = () => {
+    img.onload = async () => {
+      try {
         const canvas = document.createElement('canvas');
         canvas.width = img.width; // Should be 1080
         canvas.height = img.height; // Should be 1350
@@ -151,6 +159,9 @@ export const generateBrainImage = (baseImageUrl: string, data: BrainData): Promi
         if (!ctx) {
           return reject(new Error('Não foi possível obter o contexto do canvas.'));
         }
+        
+        // Garante que a fonte customizada está carregada antes de desenhar o texto
+        await document.fonts.ready;
   
         ctx.drawImage(img, 0, 0);
         
@@ -159,12 +170,12 @@ export const generateBrainImage = (baseImageUrl: string, data: BrainData): Promi
         const color = '#FFFFFF';
         const font = `bold ${fontSize}px ${fontName}`;
 
-        // Posições definidas pelo usuário
+        // Posições corrigidas conforme a imagem de referência
         const positions: { [key: string]: { x: number; y: number } } = {
-            pensante: { x: 540, y: 310 },   // Parte superior central
-            razao: { x: 250, y: 640 },      // Lado esquerdo
-            emocao: { x: 820, y: 640 },     // Lado direito
-            atuante: { x: 540, y: 1080 },   // Parte inferior central
+            razao:    { x: 250, y: 640 },
+            emocao:   { x: 820, y: 640 },
+            pensante: { x: 540, y: 310 },
+            atuante:  { x: 540, y: 1080 },
         };
   
         drawTextWithShadow(ctx, `${data.pensante}%`, positions.pensante.x, positions.pensante.y, font, color, 'center', 'middle');
@@ -173,7 +184,10 @@ export const generateBrainImage = (baseImageUrl: string, data: BrainData): Promi
         drawTextWithShadow(ctx, `${data.atuante}%`, positions.atuante.x, positions.atuante.y, font, color, 'center', 'middle');
   
         resolve(canvas.toDataURL('image/png'));
-      };
+      } catch (err) {
+        reject(new Error(`Erro durante o processamento da imagem do cérebro: ${err instanceof Error ? err.message : String(err)}`));
+      }
+    };
   
       img.onerror = () => {
         reject(new Error(`Falha ao carregar a imagem base de ${baseImageUrl}. Verifique a URL e as políticas de CORS.`));

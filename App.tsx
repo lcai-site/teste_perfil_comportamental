@@ -157,12 +157,10 @@ const App: React.FC = () => {
             <ImageResultCard
               title="Perfil Comportamental"
               imageUrl={animalImage}
-              filename="perfil_comportamental_animais.png"
             />
             <ImageResultCard
               title="Mapeamento Cerebral"
               imageUrl={brainImage}
-              filename="mapeamento_cerebral.png"
             />
           </div>
           {renderSubmissionStatus()}

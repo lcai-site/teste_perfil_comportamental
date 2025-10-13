@@ -10,6 +10,67 @@ const BASE_IMAGE_ANIMALS_URL = 'https://i.postimg.cc/6QDYdjPb/Design-sem-nome-17
 
 type SubmissionState = 'idle' | 'sending' | 'success' | 'error';
 
+/**
+ * Analisa os parâmetros da consulta da URL para obter os dados da aplicação.
+ * Suporta o novo parâmetro JSON `data` e recorre aos parâmetros individuais legados como fallback.
+ * Para o formato legado, infere o animal "Principal" com base na maior pontuação.
+ * @param query - O objeto URLSearchParams da URL.
+ * @returns Um objeto de dados estruturado ou nulo se nenhum dado válido for encontrado.
+ */
+const getNormalizedDataFromQuery = (query: URLSearchParams): Record<string, any> | null => {
+  const dataParam = query.get('data');
+  if (dataParam) {
+    try {
+      return JSON.parse(dataParam);
+    } catch (e) {
+      throw new Error("O valor do parâmetro 'data' não é um JSON válido.");
+    }
+  }
+
+  // Fallback para o tratamento de parâmetros legados
+  const legacyParams: { [key: string]: string } = {
+    A: 'aguia', G: 'gato', T: 'tubarao', L: 'lobo',
+    "Razão Esquerdo": 'razao', "Emoção Direito": 'emocao',
+    "Pensante Anterior": 'pensante', "Atuante Posterior": 'atuante',
+  };
+
+  const jsonData: Record<string, any> = {};
+  let hasLegacyParams = false;
+
+  for (const [key, paramName] of Object.entries(legacyParams)) {
+    const value = query.get(paramName);
+    if (value !== null) {
+      jsonData[key] = value;
+      hasLegacyParams = true;
+    }
+  }
+
+  if (!hasLegacyParams) {
+    return null; // Nenhum dado encontrado
+  }
+
+  // Infere o "Principal" para o formato legado, encontrando o animal com a maior porcentagem
+  const animalScores: { [key: string]: number } = {
+    'Águia': parseInt(jsonData.A, 10) || 0,
+    'Gato': parseInt(jsonData.G, 10) || 0,
+    'Tubarão': parseInt(jsonData.T, 10) || 0,
+    'Lobo': parseInt(jsonData.L, 10) || 0,
+  };
+  
+  let principalAnimal = 'Águia'; // Valor padrão
+  let maxScore = -1;
+
+  for (const [animal, score] of Object.entries(animalScores)) {
+    if (score > maxScore) {
+      maxScore = score;
+      principalAnimal = animal;
+    }
+  }
+  jsonData['Principal'] = principalAnimal;
+
+  return jsonData;
+};
+
 const App: React.FC = () => {
   const query = useUrlQuery();
   const [brainImage, setBrainImage] = useState<string | null>(null);
@@ -24,21 +85,19 @@ const App: React.FC = () => {
     setError(null);
     setSubmissionState('idle');
 
-    const dataParam = query.get('data');
-
-    if (!dataParam) {
-      setError('Parâmetro "data" não encontrado na URL. Forneça um objeto JSON URL-encoded com os dados necessários.');
-      setLoading(false);
-      return;
-    }
-
     try {
-      const jsonData = JSON.parse(dataParam);
+      const jsonData = getNormalizedDataFromQuery(query);
+
+      if (!jsonData) {
+        setError('Parâmetro "data" não encontrado na URL. Forneça um objeto JSON URL-encoded com os dados necessários.');
+        setLoading(false);
+        return;
+      }
 
       const requiredKeys = ["A", "G", "T", "L", "Principal", "Emoção Direito", "Razão Esquerdo", "Pensante Anterior", "Atuante Posterior"];
       const missingKeys = requiredKeys.filter(key => !(key in jsonData));
       if (missingKeys.length > 0) {
-        throw new Error(`As seguintes chaves estão faltando no objeto JSON: ${missingKeys.join(', ')}`);
+        throw new Error(`As seguintes chaves estão faltando nos dados da URL: ${missingKeys.join(', ')}`);
       }
 
       const animalData: AnimalData = {

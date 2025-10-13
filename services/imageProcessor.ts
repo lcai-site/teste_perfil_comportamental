@@ -107,16 +107,16 @@ export const generateAnimalImage = (baseImageUrl: string, data: AnimalData, prin
 
         const fontName = 'Montserrat, sans-serif';
         const normalFontSize = 90;
-        const highestFontSize = 180; // Corrigido para ser o dobro do tamanho normal
+        const highestFontSize = 180;
         const normalColor = '#FFFFFF';
         const highestColor = '#FFED00'; // Amarelo vibrante
 
-        // Posições corrigidas conforme a imagem de referência
+        // Posições ajustadas com precisão com base na imagem de referência
         const positions: { [key: string]: { x: number; y: number } } = {
-          lobo:    { x: 250, y: 410 },
-          aguia:   { x: 820, y: 410 },
-          tubarao: { x: 250, y: 960 },
-          gato:    { x: 820, y: 960 },
+          lobo:    { x: 270, y: 405 },
+          aguia:   { x: 810, y: 405 },
+          tubarao: { x: 270, y: 955 },
+          gato:    { x: 810, y: 955 },
         };
 
         for (const [name, percentage] of animalEntries) {
@@ -166,15 +166,15 @@ export const generateBrainImage = (baseImageUrl: string, data: BrainData): Promi
         ctx.drawImage(img, 0, 0);
         
         const fontName = 'Montserrat, sans-serif';
-        const fontSize = 60;
+        const fontSize = 90; // Aumentado para maior destaque
         const color = '#FFFFFF';
         const font = `bold ${fontSize}px ${fontName}`;
 
-        // Posições corrigidas conforme a imagem de referência
+        // Posições ajustadas com precisão com base na imagem de referência
         const positions: { [key: string]: { x: number; y: number } } = {
-            razao:    { x: 250, y: 640 },
-            emocao:   { x: 820, y: 640 },
-            pensante: { x: 540, y: 310 },
+            razao:    { x: 200, y: 675 },
+            emocao:   { x: 880, y: 675 },
+            pensante: { x: 540, y: 300 },
             atuante:  { x: 540, y: 1080 },
         };
   

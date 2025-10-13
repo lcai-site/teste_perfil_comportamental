@@ -64,11 +64,11 @@ const drawTextWithShadow = (
   ctx.textAlign = textAlign;
   ctx.textBaseline = textBaseline;
 
-  // Sombra para legibilidade
+  // Sombra para legibilidade (agora como um brilho centralizado)
   ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
   ctx.shadowBlur = 10;
-  ctx.shadowOffsetX = 2;
-  ctx.shadowOffsetY = 2;
+  ctx.shadowOffsetX = 0; // Removido o deslocamento para centralização perfeita
+  ctx.shadowOffsetY = 0; // Removido o deslocamento para centralização perfeita
 
   ctx.fillText(text, x, y);
   

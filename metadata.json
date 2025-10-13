@@ -1,0 +1,5 @@
+{
+  "name": "Gerador de Imagens com Resultados",
+  "description": "Uma aplicação que recebe dados de porcentagem via URL, aplica-os sobre imagens base e permite o download dos resultados.",
+  "requestFramePermissions": []
+}

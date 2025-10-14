@@ -120,8 +120,8 @@ export const generateAnimalImage = (baseImageUrl: string, data: AnimalData, prin
         const positions: { [key: string]: { x: number; y: number } } = {
           lobo:    { x: 140, y: 280 },
           aguia:   { x: 390, y: 280 },
-          tubarao: { x: 140, y: 650 },
-          gato:    { x: 410, y: 590 },
+          tubarao: { x: 140, y: 625 },
+          gato:    { x: 435, y: 620 },
         };
 
         for (const [name, percentage] of animalEntries) {

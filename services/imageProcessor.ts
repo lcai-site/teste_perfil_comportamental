@@ -118,10 +118,10 @@ export const generateAnimalImage = (baseImageUrl: string, data: AnimalData, prin
 
         // Posições ajustadas com precisão para o novo layout, ao lado dos títulos
         const positions: { [key: string]: { x: number; y: number } } = {
-          lobo:    { x: 140, y: 280 },
-          aguia:   { x: 440, y: 280 },
-          tubarao: { x: 140, y: 625 },
-          gato:    { x: 440, y: 625 },
+          lobo:    { x: 150, y: 280 },
+          aguia:   { x: 450, y: 280 },
+          tubarao: { x: 150, y: 625 },
+          gato:    { x: 450, y: 625 },
         };
 
         for (const [name, percentage] of animalEntries) {
@@ -184,8 +184,8 @@ export const generateBrainImage = (baseImageUrl: string, data: BrainData): Promi
         const positions: { [key: string]: { x: number; y: number; align: CanvasTextAlign } } = {
             pensante: { x: 540, y: 240, align: 'center' }, // Acima do cérebro, alinhado com "PENSANTE"
             atuante:  { x: 540, y: 995, align: 'center' }, // Abaixo do cérebro, alinhado com "ATUANTE"
-            razao:    { x: 200, y: 480, align: 'left'   }, // À esquerda, alinhado com a seta "RAZÃO"
-            emocao:   { x: 880, y: 480, align: 'right'  }, // À direita, alinhado com a seta "EMOÇÃO"
+            razao:    { x: 540, y: 480, align: 'left'   }, // À esquerda, alinhado com a seta "RAZÃO"
+            emocao:   { x: 540, y: 480, align: 'right'  }, // À direita, alinhado com a seta "EMOÇÃO"
         };
   
         // Refatorado para usar um loop para consistência e clareza

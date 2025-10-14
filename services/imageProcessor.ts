@@ -107,16 +107,16 @@ export const generateAnimalImage = (baseImageUrl: string, data: AnimalData, prin
 
         const fontName = 'Montserrat, sans-serif';
         const normalFontSize = 36;
-        const highestFontSize = 48;
+        const highestFontSize = 44;
         const normalColor = '#FFFFFF';
         const highestColor = '#FFED00'; // Amarelo vibrante
 
         // Posições ajustadas com precisão com base na imagem de referência 1080x1350
         const positions: { [key: string]: { x: number; y: number } } = {
-          lobo:    { x: 270, y: 595 },
-          aguia:   { x: 810, y: 595 },
-          tubarao: { x: 270, y: 1155 },
-          gato:    { x: 810, y: 1155 },
+          lobo:    { x: 295, y: 445 },
+          aguia:   { x: 785, y: 445 },
+          tubarao: { x: 295, y: 1120 },
+          gato:    { x: 785, y: 1120 },
         };
 
         for (const [name, percentage] of animalEntries) {
@@ -166,16 +166,16 @@ export const generateBrainImage = (baseImageUrl: string, data: BrainData): Promi
         ctx.drawImage(img, 0, 0);
         
         const fontName = 'Montserrat, sans-serif';
-        const fontSize = 90; // Aumentado para maior destaque
+        const fontSize = 36; // Aumentado para maior destaque
         const color = '#FFFFFF';
         const font = `bold ${fontSize}px ${fontName}`;
 
         // Posições ajustadas com precisão com base na imagem de referência 1080x1350
         const positions: { [key: string]: { x: number; y: number } } = {
-            razao:    { x: 200, y: 450 },  // Top-left
-            emocao:   { x: 880, y: 1050 }, // Bottom-right
-            pensante: { x: 880, y: 450 },  // Top-right
-            atuante:  { x: 200, y: 1050 }, // Bottom-left
+            razao:    { x: 285, y: 540 },  // Top-left
+            emocao:   { x: 795, y: 540 }, // Bottom-right
+            pensante: { x: 540, y: 285 },  // Top-right
+            atuante:  { x: 540, y: 855 }, // Bottom-left
         };
   
         drawTextWithShadow(ctx, `${data.pensante}%`, positions.pensante.x, positions.pensante.y, font, color, 'center', 'middle');

@@ -185,7 +185,7 @@ export const generateBrainImage = (baseImageUrl: string, data: BrainData): Promi
             pensante: { x: 320, y: 240, align: 'center' }, // Acima do cérebro, alinhado com "PENSANTE"
             atuante:  { x: 320, y: 800, align: 'center' }, // Abaixo do cérebro, alinhado com "ATUANTE"
             razao:    { x: 48, y: 450, align: 'left'   }, // À esquerda, alinhado com a seta "RAZÃO"
-            emocao:   { x: 600, y: 550, align: 'right'  }, // À direita, alinhado com a seta "EMOÇÃO"
+            emocao:   { x: 600, y: 450, align: 'right'  }, // À direita, alinhado com a seta "EMOÇÃO"
         };
   
         // Refatorado para usar um loop para consistência e clareza

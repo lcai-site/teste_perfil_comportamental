@@ -106,17 +106,17 @@ export const generateAnimalImage = (baseImageUrl: string, data: AnimalData, prin
         const highestAnimalName = principalAnimalKey;
 
         const fontName = 'Montserrat, sans-serif';
-        const normalFontSize = 36;
-        const highestFontSize = 44;
+        const normalFontSize = 48; // Aumentado para melhor visibilidade
+        const highestFontSize = 56; // Aumentado para maior destaque
         const normalColor = '#FFFFFF';
         const highestColor = '#FFED00'; // Amarelo vibrante
 
-        // Posições ajustadas com precisão com base na imagem de referência 1080x1350
+        // Posições ajustadas com precisão para o novo layout, ao lado dos títulos
         const positions: { [key: string]: { x: number; y: number } } = {
-          lobo:    { x: 295, y: 445 },
-          aguia:   { x: 785, y: 445 },
-          tubarao: { x: 295, y: 1120 },
-          gato:    { x: 785, y: 1120 },
+          lobo:    { x: 490, y: 100 },
+          aguia:   { x: 970, y: 100 },
+          tubarao: { x: 490, y: 790 },
+          gato:    { x: 970, y: 790 },
         };
 
         for (const [name, percentage] of animalEntries) {
@@ -127,7 +127,8 @@ export const generateAnimalImage = (baseImageUrl: string, data: AnimalData, prin
           const text = `${percentage}%`;
           const { x, y } = positions[name as keyof AnimalData];
 
-          drawTextWithShadow(ctx, text, x, y, font, color, 'center', 'middle');
+          // FIX: Changed textBaseline from 'center' to 'middle' as 'center' is not a valid value.
+          drawTextWithShadow(ctx, text, x, y, font, color, 'right', 'middle');
         }
 
         resolve(canvas.toDataURL('image/png'));
@@ -166,22 +167,31 @@ export const generateBrainImage = (baseImageUrl: string, data: BrainData): Promi
         ctx.drawImage(img, 0, 0);
         
         const fontName = 'Montserrat, sans-serif';
-        const fontSize = 36; // Aumentado para maior destaque
+        const fontSize = 48; // Aumentado para maior destaque e consistência
         const color = '#FFFFFF';
         const font = `bold ${fontSize}px ${fontName}`;
 
-        // Posições ajustadas com precisão com base na imagem de referência 1080x1350
-        const positions: { [key: string]: { x: number; y: number } } = {
-            razao:    { x: 285, y: 540 },  // Top-left
-            emocao:   { x: 795, y: 540 }, // Bottom-right
-            pensante: { x: 540, y: 285 },  // Top-right
-            atuante:  { x: 540, y: 855 }, // Bottom-left
+        // Posições ajustadas com precisão para o novo layout, ao lado das setas
+        const positions: { [key: string]: { x: number; y: number; align: CanvasTextAlign } } = {
+            razao:    { x: 200, y: 480, align: 'left' },  // Ao lado da seta superior esquerda
+            emocao:   { x: 880, y: 480, align: 'right' }, // Ao lado da seta superior direita
+            pensante: { x: 540, y: 240, align: 'center' }, // Acima de "PENSANTE" (pode ser ajustado)
+            atuante:  { x: 450, y: 940, align: 'right' }, // Ao lado da seta inferior esquerda
         };
   
-        drawTextWithShadow(ctx, `${data.pensante}%`, positions.pensante.x, positions.pensante.y, font, color, 'center', 'middle');
-        drawTextWithShadow(ctx, `${data.razao}%`, positions.razao.x, positions.razao.y, font, color, 'center', 'middle');
-        drawTextWithShadow(ctx, `${data.emocao}%`, positions.emocao.x, positions.emocao.y, font, color, 'center', 'middle');
-        drawTextWithShadow(ctx, `${data.atuante}%`, positions.atuante.x, positions.atuante.y, font, color, 'center', 'middle');
+        // Refatorado para usar um loop para consistência e clareza
+        const brainEntries = Object.entries(data) as [keyof BrainData, number][];
+
+        for (const [name, percentage] of brainEntries) {
+            const pos = positions[name];
+            if(pos) {
+                drawTextWithShadow(ctx, `${percentage}%`, pos.x, pos.y, font, color, pos.align, 'middle');
+            }
+        }
+
+        // Ajuste manual para o atuante, que tem uma seta diferente
+        const atuantePos = { x: 540, y: 995 };
+        drawTextWithShadow(ctx, `${data.atuante}%`, atuantePos.x, atuantePos.y, font, color, 'center', 'middle');
   
         resolve(canvas.toDataURL('image/png'));
       } catch (err) {

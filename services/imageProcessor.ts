@@ -107,8 +107,19 @@ export const generateAnimalImage = (baseImageUrl: string, data: AnimalData, prin
 
         ctx.drawImage(img, 0, 0);
 
-        const animalEntries = Object.entries(data);
-        const highestAnimalName = principalAnimalKey;
+        const animalEntries = Object.entries(data) as [keyof AnimalData, number][];
+
+        // Determina o animal com a maior porcentagem a partir dos dados fornecidos,
+        // garantindo que o destaque visual seja sempre aplicado corretamente.
+        let highestAnimalName: keyof AnimalData | null = null;
+        let maxPercentage = -1;
+
+        for (const [name, percentage] of animalEntries) {
+            if (percentage > maxPercentage) {
+                maxPercentage = percentage;
+                highestAnimalName = name;
+            }
+        }
 
         const fontName = 'Montserrat, sans-serif';
         const normalFontSize = 36; // Aumentado para melhor visibilidade

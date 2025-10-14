@@ -118,9 +118,9 @@ export const generateAnimalImage = (baseImageUrl: string, data: AnimalData, prin
 
         // Posições ajustadas com precisão para o novo layout, ao lado dos títulos
         const positions: { [key: string]: { x: number; y: number } } = {
-          lobo:    { x: 190, y: 300 },
-          aguia:   { x: 420, y: 300 },
-          tubarao: { x: 190, y: 590 },
+          lobo:    { x: 100, y: 280 },
+          aguia:   { x: 390, y: 280 },
+          tubarao: { x: 100, y: 690 },
           gato:    { x: 410, y: 590 },
         };
 

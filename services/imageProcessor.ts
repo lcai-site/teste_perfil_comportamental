@@ -112,7 +112,7 @@ export const generateAnimalImage = (baseImageUrl: string, data: AnimalData, prin
 
         const fontName = 'Montserrat, sans-serif';
         const normalFontSize = 36; // Aumentado para melhor visibilidade
-        const highestFontSize = 44; // Aumentado para maior destaque
+        const highestFontSize = 36; // Aumentado para maior destaque
         const normalColor = '#FFFFFF';
         const highestColor = '#FFED00'; // Amarelo vibrante
 
@@ -176,7 +176,7 @@ export const generateBrainImage = (baseImageUrl: string, data: BrainData): Promi
         ctx.drawImage(img, 0, 0);
         
         const fontName = 'Montserrat, sans-serif';
-        const fontSize = 48; // Aumentado para maior destaque e consistência
+        const fontSize = 44; // Aumentado para maior destaque e consistência
         const color = '#FFFFFF';
         const font = `bold ${fontSize}px ${fontName}`;
 

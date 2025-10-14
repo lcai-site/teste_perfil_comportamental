@@ -106,8 +106,8 @@ export const generateAnimalImage = (baseImageUrl: string, data: AnimalData, prin
         const highestAnimalName = principalAnimalKey;
 
         const fontName = 'Montserrat, sans-serif';
-        const normalFontSize = 90;
-        const highestFontSize = 180;
+        const normalFontSize = 36;
+        const highestFontSize = 48;
         const normalColor = '#FFFFFF';
         const highestColor = '#FFED00'; // Amarelo vibrante
 

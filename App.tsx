@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { useUrlQuery } from './hooks/useUrlQuery';
 import { generateAnimalImage, generateBrainImage, sendToN8N, AnimalData } from './services/imageProcessor';
@@ -212,7 +213,7 @@ const App: React.FC = () => {
           <h2 className="text-2xl font-bold text-red-400 mb-2">Erro</h2>
           <p className="text-red-300 font-mono break-words">{error}</p>
           <p className="mt-4 text-gray-400">Exemplo de URL correta (JSON precisa ser URL-encoded):<br/>
-          <code className="text-sm bg-gray-900 p-1 rounded">{'?data={"A":35,"G":20,"T":30,"L":15,"Principal":"Águia", ...etc }'}</code>
+          <code className="text-sm bg-gray-900 p-1 rounded">{'?data={"A":35,"G":20,"T":30,"L":15,"Principal":"Águia","Razão Esquerdo":55,"Emoção Direito":45,"Pensante Anterior":60,"Atuante Posterior":40}'}</code>
           </p>
         </div>
       );

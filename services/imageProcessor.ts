@@ -111,12 +111,12 @@ export const generateAnimalImage = (baseImageUrl: string, data: AnimalData, prin
         const normalColor = '#FFFFFF';
         const highestColor = '#FFED00'; // Amarelo vibrante
 
-        // Posições ajustadas com precisão com base na imagem de referência
+        // Posições ajustadas com precisão com base na imagem de referência 1080x1350
         const positions: { [key: string]: { x: number; y: number } } = {
-          lobo:    { x: 270, y: 405 },
-          aguia:   { x: 810, y: 405 },
-          tubarao: { x: 270, y: 955 },
-          gato:    { x: 810, y: 955 },
+          lobo:    { x: 270, y: 595 },
+          aguia:   { x: 810, y: 595 },
+          tubarao: { x: 270, y: 1155 },
+          gato:    { x: 810, y: 1155 },
         };
 
         for (const [name, percentage] of animalEntries) {
@@ -170,12 +170,12 @@ export const generateBrainImage = (baseImageUrl: string, data: BrainData): Promi
         const color = '#FFFFFF';
         const font = `bold ${fontSize}px ${fontName}`;
 
-        // Posições ajustadas com precisão com base na imagem de referência
+        // Posições ajustadas com precisão com base na imagem de referência 1080x1350
         const positions: { [key: string]: { x: number; y: number } } = {
-            razao:    { x: 200, y: 675 },
-            emocao:   { x: 880, y: 675 },
-            pensante: { x: 540, y: 300 },
-            atuante:  { x: 540, y: 1080 },
+            razao:    { x: 200, y: 450 },  // Top-left
+            emocao:   { x: 880, y: 1050 }, // Bottom-right
+            pensante: { x: 880, y: 450 },  // Top-right
+            atuante:  { x: 200, y: 1050 }, // Bottom-left
         };
   
         drawTextWithShadow(ctx, `${data.pensante}%`, positions.pensante.x, positions.pensante.y, font, color, 'center', 'middle');

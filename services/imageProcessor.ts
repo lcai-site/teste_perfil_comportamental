@@ -89,13 +89,18 @@ export const generateAnimalImage = (baseImageUrl: string, data: AnimalData, prin
     img.onload = async () => {
       try {
         const canvas = document.createElement('canvas');
-        canvas.width = img.width; // Should be 1080
-        canvas.height = img.height; // Should be 1350
         const ctx = canvas.getContext('2d');
 
         if (!ctx) {
           return reject(new Error('Não foi possível obter o contexto do canvas.'));
         }
+
+        // --- CORREÇÃO PARA HIGH DPI ---
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = img.width * dpr;
+        canvas.height = img.height * dpr;
+        ctx.scale(dpr, dpr);
+        // --- FIM DA CORREÇÃO ---
 
         // Garante que a fonte customizada está carregada antes de desenhar o texto
         await document.fonts.ready;
@@ -127,7 +132,6 @@ export const generateAnimalImage = (baseImageUrl: string, data: AnimalData, prin
           const text = `${percentage}%`;
           const { x, y } = positions[name as keyof AnimalData];
 
-          // FIX: Changed textBaseline from 'center' to 'middle' as 'center' is not a valid value.
           drawTextWithShadow(ctx, text, x, y, font, color, 'right', 'middle');
         }
 
@@ -153,13 +157,18 @@ export const generateBrainImage = (baseImageUrl: string, data: BrainData): Promi
     img.onload = async () => {
       try {
         const canvas = document.createElement('canvas');
-        canvas.width = img.width; // Should be 1080
-        canvas.height = img.height; // Should be 1350
         const ctx = canvas.getContext('2d');
   
         if (!ctx) {
           return reject(new Error('Não foi possível obter o contexto do canvas.'));
         }
+
+        // --- CORREÇÃO PARA HIGH DPI ---
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = img.width * dpr;
+        canvas.height = img.height * dpr;
+        ctx.scale(dpr, dpr);
+        // --- FIM DA CORREÇÃO ---
         
         // Garante que a fonte customizada está carregada antes de desenhar o texto
         await document.fonts.ready;
@@ -171,12 +180,12 @@ export const generateBrainImage = (baseImageUrl: string, data: BrainData): Promi
         const color = '#FFFFFF';
         const font = `bold ${fontSize}px ${fontName}`;
 
-        // Posições ajustadas com precisão para o novo layout, ao lado das setas
+        // Posições ajustadas para alinhar com os indicadores visuais (setas e títulos)
         const positions: { [key: string]: { x: number; y: number; align: CanvasTextAlign } } = {
-            razao:    { x: 200, y: 480, align: 'left' },  // Ao lado da seta superior esquerda
-            emocao:   { x: 880, y: 480, align: 'right' }, // Ao lado da seta superior direita
-            pensante: { x: 540, y: 240, align: 'center' }, // Acima de "PENSANTE" (pode ser ajustado)
-            atuante:  { x: 450, y: 940, align: 'right' }, // Ao lado da seta inferior esquerda
+            pensante: { x: 540, y: 240, align: 'center' }, // Acima do cérebro, alinhado com "PENSANTE"
+            atuante:  { x: 540, y: 995, align: 'center' }, // Abaixo do cérebro, alinhado com "ATUANTE"
+            razao:    { x: 200, y: 480, align: 'left'   }, // À esquerda, alinhado com a seta "RAZÃO"
+            emocao:   { x: 880, y: 480, align: 'right'  }, // À direita, alinhado com a seta "EMOÇÃO"
         };
   
         // Refatorado para usar um loop para consistência e clareza
@@ -188,10 +197,6 @@ export const generateBrainImage = (baseImageUrl: string, data: BrainData): Promi
                 drawTextWithShadow(ctx, `${percentage}%`, pos.x, pos.y, font, color, pos.align, 'middle');
             }
         }
-
-        // Ajuste manual para o atuante, que tem uma seta diferente
-        const atuantePos = { x: 540, y: 995 };
-        drawTextWithShadow(ctx, `${data.atuante}%`, atuantePos.x, atuantePos.y, font, color, 'center', 'middle');
   
         resolve(canvas.toDataURL('image/png'));
       } catch (err) {

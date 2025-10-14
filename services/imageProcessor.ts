@@ -112,7 +112,7 @@ export const generateAnimalImage = (baseImageUrl: string, data: AnimalData, prin
 
         const fontName = 'Montserrat, sans-serif';
         const normalFontSize = 36; // Aumentado para melhor visibilidade
-        const highestFontSize = 36; // Aumentado para maior destaque
+        const highestFontSize = 40; // Aumentado para maior destaque
         const normalColor = '#FFFFFF';
         const highestColor = '#FFED00'; // Amarelo vibrante
 
@@ -120,8 +120,8 @@ export const generateAnimalImage = (baseImageUrl: string, data: AnimalData, prin
         const positions: { [key: string]: { x: number; y: number } } = {
           lobo:    { x: 120, y: 280 },
           aguia:   { x: 420, y: 280 },
-          tubarao: { x: 120, y: 620 },
-          gato:    { x: 420, y: 620 },
+          tubarao: { x: 120, y: 625 },
+          gato:    { x: 420, y: 625 },
         };
 
         for (const [name, percentage] of animalEntries) {
@@ -183,7 +183,7 @@ export const generateBrainImage = (baseImageUrl: string, data: BrainData): Promi
         // Posições ajustadas para alinhar com os indicadores visuais (setas e títulos)
         const positions: { [key: string]: { x: number; y: number; align: CanvasTextAlign } } = {
             pensante: { x: 320, y: 240, align: 'center' }, // Acima do cérebro, alinhado com "PENSANTE"
-            atuante:  { x: 320, y: 800, align: 'center' }, // Abaixo do cérebro, alinhado com "ATUANTE"
+            atuante:  { x: 320, y: 760, align: 'center' }, // Abaixo do cérebro, alinhado com "ATUANTE"
             razao:    { x: 48, y: 450, align: 'left'   }, // À esquerda, alinhado com a seta "RAZÃO"
             emocao:   { x: 600, y: 450, align: 'right'  }, // À direita, alinhado com a seta "EMOÇÃO"
         };

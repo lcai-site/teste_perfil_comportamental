@@ -111,8 +111,8 @@ export const generateAnimalImage = (baseImageUrl: string, data: AnimalData, prin
         const highestAnimalName = principalAnimalKey;
 
         const fontName = 'Montserrat, sans-serif';
-        const normalFontSize = 48; // Aumentado para melhor visibilidade
-        const highestFontSize = 56; // Aumentado para maior destaque
+        const normalFontSize = 36; // Aumentado para melhor visibilidade
+        const highestFontSize = 44; // Aumentado para maior destaque
         const normalColor = '#FFFFFF';
         const highestColor = '#FFED00'; // Amarelo vibrante
 
@@ -184,7 +184,7 @@ export const generateBrainImage = (baseImageUrl: string, data: BrainData): Promi
         const positions: { [key: string]: { x: number; y: number; align: CanvasTextAlign } } = {
             pensante: { x: 330, y: 240, align: 'center' }, // Acima do cérebro, alinhado com "PENSANTE"
             atuante:  { x: 350, y: 100, align: 'center' }, // Abaixo do cérebro, alinhado com "ATUANTE"
-            razao:    { x: 150, y: 350, align: 'left'   }, // À esquerda, alinhado com a seta "RAZÃO"
+            razao:    { x: 50, y: 150, align: 'left'   }, // À esquerda, alinhado com a seta "RAZÃO"
             emocao:   { x: 330, y: 100, align: 'right'  }, // À direita, alinhado com a seta "EMOÇÃO"
         };
   

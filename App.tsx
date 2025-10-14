@@ -7,7 +7,7 @@ import { Loader } from './components/Loader';
 
 // URLs das imagens base
 const BASE_IMAGE_BRAIN_URL = 'https://i.postimg.cc/LXMYjwtX/Inserir-um-t-tulo-6.png';
-const BASE_IMAGE_ANIMALS_URL = 'https://i.postimg.cc/6QDYdjPb/Design-sem-nome-17.png';
+const BASE_IMAGE_ANIMALS_URL = 'https://i.postimg.cc/0N1sjN2W/Inserir-um-t-tulo-7.png';
 
 type SubmissionState = 'idle' | 'sending' | 'success' | 'error';
 

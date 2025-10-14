@@ -183,7 +183,7 @@ export const generateBrainImage = (baseImageUrl: string, data: BrainData): Promi
         // Posições ajustadas para alinhar com os indicadores visuais (setas e títulos)
         const positions: { [key: string]: { x: number; y: number; align: CanvasTextAlign } } = {
             pensante: { x: 320, y: 240, align: 'center' }, // Acima do cérebro, alinhado com "PENSANTE"
-            atuante:  { x: 320, y: 760, align: 'center' }, // Abaixo do cérebro, alinhado com "ATUANTE"
+            atuante:  { x: 320, y: 780, align: 'center' }, // Abaixo do cérebro, alinhado com "ATUANTE"
             razao:    { x: 48, y: 450, align: 'left'   }, // À esquerda, alinhado com a seta "RAZÃO"
             emocao:   { x: 600, y: 450, align: 'right'  }, // À direita, alinhado com a seta "EMOÇÃO"
         };
